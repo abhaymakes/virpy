@@ -1,0 +1,132 @@
+[
+    {
+        "region": "US Central",
+        "city": "Atlanta",
+        "nickname": "Mountain"
+    },
+    {
+        "region": "US Central",
+        "city": "Dallas",
+        "nickname": "Ranch"
+    },
+    {
+        "region": "US East",
+        "city": "Miami",
+        "nickname": "Snow"
+    },
+    {
+        "region": "US East",
+        "city": "Maimi",
+        "nickname": "Vice"
+    },
+    {
+        "region": "US East",
+        "city": "New York",
+        "nickname": "Empire"
+    },
+    {
+        "region": "US East",
+        "city": "New York",
+        "nickname": "Grand Central"
+    },
+    {
+        "region": "US West",
+        "city": "Los Angeles",
+        "nickname": "Dogg"
+    },
+    {
+        "region": "US West",
+        "city": "Seattle",
+        "nickname": "Cobain"
+    },
+    {
+        "region": "Canada East",
+        "city": "Montreal",
+        "nickname": "Expo 67"
+    },
+    {
+        "region": "Canada East",
+        "city": "Toronto",
+        "nickname": "Comfort Zone"
+    },
+    {
+        "region": "Canada East",
+        "city": "Toronto",
+        "nickname": "The 6"
+    },
+    {
+        "region": "Canad West",
+        "city": "Vancouver",
+        "nickname": "Vansterdam"
+    },
+    {
+        "region": "France",
+        "city": "Paris",
+        "nickname": "Jardin"
+    },
+    {
+        "region": "France",
+        "city": "Paris",
+        "nickname": "Seine"
+    },
+    {
+        "region": "Germany",
+        "city": "Frankfurt",
+        "nickname": "Castle"
+    },
+    {
+        "region": "Germany",
+        "city": "Frankfurt",
+        "nickname": "Wurstchen"
+    },
+    {
+        "region": "Netherlands",
+        "city": "Amsterdam",
+        "nickname": "Canal"
+    },
+    {
+        "region": "Netherlands",
+        "city": "Amsterdam",
+        "nickname": "Red Light"
+    },
+    {
+        "region": "Netherlands",
+        "city": "Amsterdam",
+        "nickname": "Tulip"
+    },
+    {
+        "region": "Norway",
+        "city": "Oslo",
+        "nickname": "Fjord"
+    },
+    {
+        "region": "Romania",
+        "city": "Bucharest",
+        "nickname": "No Vampires"
+    },
+    {
+        "region": "Switzerland",
+        "city": "Zurich",
+        "nickname": "Alphorn"
+    },
+    {
+        "region": "Switzerland",
+        "city": "Zurich",
+        "nickname": "Lindenhof"
+    },
+    {
+        "region": "United Kingdom",
+        "city": "London",
+        "nickname": "Crumpets"
+    },
+    {
+        "region": "United Kingdom",
+        "city": "London",
+        "nickname": "Custard"
+    },
+    {
+        "region": "Hong Kong",
+        "city": "Hong Kong",
+        "nickname": "Victoria"
+    }
+]
