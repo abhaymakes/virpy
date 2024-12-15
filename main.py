@@ -178,9 +178,11 @@ with analysis_progress_bar as progress:
     try:
         analysis_task = progress.add_task("[green]Analyzing", total=len(total_hashes))
 
+        main_url = "https://www.virustotal.com/gui/"
+
         for index, hash_value in enumerate(total_hashes):
             hash_value = hash_value.strip()
-            driver.get(f"https://www.virustotal.com/gui/file/{hash_value}")
+            driver.get(f"{main_url}file/{hash_value}")
 
             time.sleep(args.delay)
 

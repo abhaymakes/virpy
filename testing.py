@@ -197,8 +197,27 @@ def scan_file_hash(input_data):
     return basic_data
 
 
-def scan_domain(target):
-    pass
+def scan_domain(input_data):
+    target = input_data.strip()
+    driver.get(f"https://www.virustotal.com/gui/domain/{target}")
+
+    time.sleep(args.delay)
+
+    element = WebDriverWait(driver, 100).until(
+        EC.visibility_of_element_located(
+            (By.XPATH, '//*[@id="view-container"]/file-view')
+        )
+    )
+
+    community_score = helper.get_community_score()
+
+    basic_data = helper.get_url_data(driver=driver)
+    try:
+        basic_data["community_score"] = community_score
+    except AttributeError:
+        basic_data["community_score"] = 0
+
+    return basic_data
 
 
 def scan_ip(target):

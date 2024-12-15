@@ -62,8 +62,31 @@ class Helper:
 
         soup = BeautifulSoup(html_content, "html.parser")
 
-        positives_text = soup.find("div", {"class": "hstack gap-2 fw-bold text-danger"})
+        positives = soup.find("div", {"class": "hstack gap-2 fw-bold text-danger"}).text
 
+        url = soup.find("div", {"class": "vstack gap-2 align-self-center text-truncate me-auto"}).find("div", {"class": "text-truncate"}).text
+
+        details_div = soup.find("div", {"class": "hstack gap-4"}).find_all("div", recursive=False)
+
+        registrar_exists = details_div[2].find("div", {"class": "text-body-tertiary"}).text
+
+        creation_date = details_div[4].find("vt-ui-time-ago").get("data-tooltip-text")
+
+        last_analysis = details_div[6].find("vt-ui-time-ago").get("data-tooltip-text")
+
+
+        if registrar_exists == "Registrar":
+            self.url_data['registrar'] = details_div[2].find("a").text.replace("\n", "").strip()
+        else:
+            self.url_data['registrar'] = "Unknown"
+
+
+        self.url_data['positives'] = self.format_text(positives)
+        self.url_data['url'] = self.format_text(url)
+        self.url_data['creation_date'] = self.format_text(creation_date)
+        self.url_data['last_analysis'] = self.format_text(last_analysis)
+
+        return self.url_data
 
     
     def convert_utc_to_local(self, date_string):
@@ -81,6 +104,9 @@ class Helper:
 
         return local_time.strftime("%d %B %Y at %I:%M %p")
 
+
+    def format_text(self, text: str):
+        return text.replace("\n", "").strip()
     
     def get_community_score(self, driver):
         """_summary_
@@ -92,10 +118,11 @@ class Helper:
             int: Community score of the hash
         """
         community_score = driver.execute_script(
-                """return document.querySelector("#view-container > file-view").shadowRoot.querySelector("#report").shadowRoot.querySelector("div > div.row.mb-4.d-none.d-lg-flex > div.col-auto > vt-ioc-score-widget").shadowRoot.querySelector("div > span > span.badge.rounded-pill.fs-6.fw-normal.hstack.align-self-auto.pe-2.bg-opacity-10.bg-danger > span.ms-2.me-1.text-danger");"""
+                """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report").shadowRoot.querySelector("div > div.row.mb-4.d-none.d-lg-flex > div.col-auto > vt-ioc-score-widget").shadowRoot.querySelector("div > span > span.badge.rounded-pill.fs-6.fw-normal.hstack.align-self-auto.pe-2.bg-body-tertiary");"""
             )
         try:
-            return community_score.text
+            soup = BeautifulSoup(community_score, "html.parser")
+            return soup.find("span").text
         except AttributeError:
             return 0
         
@@ -128,6 +155,7 @@ class Helper:
         content = driver.execute_script(
             """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report > vt-ui-domain-card").shadowRoot.innerHTML""")
 
+        return self.parse_url_data(content)
 
     def get_logger(self): 
         """

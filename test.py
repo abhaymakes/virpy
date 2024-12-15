@@ -157,7 +157,10 @@ f = """
 </div>
 """
 
-d = {}
+def format_text(text):
+    return text.replace("\n", "").strip()
+
+url_data = {}
 
 soup = BeautifulSoup(f, "html.parser")
 
@@ -167,16 +170,20 @@ url = soup.find("div", {"class": "vstack gap-2 align-self-center text-truncate m
 
 details_div = soup.find("div", {"class": "hstack gap-4"}).find_all("div", recursive=False)
 
-exists_registrar = details_div[2].find("div", {"class": "text-body-tertiary"}).text
+registrar_exists = details_div[2].find("div", {"class": "text-body-tertiary"}).text
+
+creation_date = details_div[4].find("vt-ui-time-ago").get("data-tooltip-text")
+
+last_analysis = details_div[6].find("vt-ui-time-ago").get("data-tooltip-text")
 
 
-if exists_registrar == "Registrar":
-    d['registrar'] = details_div[2].find("a").text.replace("\n", "").strip()
+if registrar_exists == "Registrar":
+    url_data['registrar'] = details_div[2].find("a").text.replace("\n", "").strip()
 else:
-    d['registrar'] = "Unknown"
+    url_data['registrar'] = "Unknown"
 
 
-d['positives'] = positives.replace("\n", "").strip()
-d['url'] = url.replace("\n", "").strip()
-
-print(d)
+url_data['positives'] = format_text(positives)
+url_data['url'] = format_text(url)
+url_data['creation_date'] = format_text(creation_date)
+url_data['last_analysis'] = format_text(last_analysis)
