@@ -1,0 +1,11 @@
+beautifulsoup4==4.12.3
+colorlog==6.9.0
+docx==0.2.4
+fake_useragent==2.0.3
+fpdf==1.7.2
+python_dateutil==2.9.0.post0
+rich==13.9.4
+rich_argparse==1.6.0
+rich_gradient==0.1.7
+selenium==4.27.1
+selenium_stealth==1.0.6
