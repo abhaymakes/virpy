@@ -2,7 +2,9 @@ from fpdf import FPDF
 from datetime import datetime
 
 class PDFManager(FPDF):
-
+    
+    def __init__(self, analysis_mode : str = "file", orientation = "portrait", unit = "mm", format = "A4", font_cache_dir = "DEPRECATED"):
+        super().__init__(orientation, unit, format, font_cache_dir)
 
     is_first_page = True
     when = datetime.now()
@@ -33,13 +35,11 @@ class PDFManager(FPDF):
             self.set_font("Arial", "", 10)
             self.cell(0, 6, value, 0, 1)
 
-        self.ln(5)  # Add space between reports
+        self.ln(5) 
 
         # Add a divider
-        self.set_draw_color(200, 200, 200)  # Set gray color
-        self.line(10, self.get_y(), 200, self.get_y())  # Draw a line
-        self.ln(5)  # Add space after the divider
+        self.set_draw_color(200, 200, 200)
+        self.line(10, self.get_y(), 200, self.get_y())
+        self.ln(5)
 
         self.is_first_page = False
-
-

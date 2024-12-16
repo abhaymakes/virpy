@@ -44,7 +44,7 @@ class Helper:
 
         self.basic_data["file_name"] = common_file_name.text.strip()
         self.basic_data["file_size"] = file_size.text.strip()
-        self.basic_data["file_last_analysis"] = self.convert_utc_to_local(last_analysis_date.strip())
+        self.basic_data["last_analysis"] = self.convert_utc_to_local(last_analysis_date.strip())
 
         return self.basic_data
     
@@ -70,9 +70,12 @@ class Helper:
 
         registrar_exists = details_div[2].find("div", {"class": "text-body-tertiary"}).text
 
-        creation_date = details_div[4].find("vt-ui-time-ago").get("data-tooltip-text")
+        try:
+            creation_date = details_div[4].find("vt-ui-time-ago").get("data-tooltip-text")
+        except AttributeError:
+            creation_date = "N/A"
 
-        last_analysis = details_div[6].find("vt-ui-time-ago").get("data-tooltip-text")
+        last_analysis = soup.find("div", {"class": "hstack gap-4"}).find_all("vt-ui-time-ago")[-1].get("data-tooltip-text")
 
 
         if registrar_exists == "Registrar":
@@ -81,10 +84,12 @@ class Helper:
             self.url_data['registrar'] = "Unknown"
 
 
-        self.url_data['positives'] = self.format_text(positives)
         self.url_data['url'] = self.format_text(url)
+        self.url_data['analysis'] = self.format_text(positives)
         self.url_data['creation_date'] = self.format_text(creation_date)
-        self.url_data['last_analysis'] = self.format_text(last_analysis)
+        self.url_data['last_analysis'] = self.convert_utc_to_local(last_analysis.strip())
+
+        print(self.url_data)
 
         return self.url_data
 
@@ -108,7 +113,7 @@ class Helper:
     def format_text(self, text: str):
         return text.replace("\n", "").strip()
     
-    def get_community_score(self, driver):
+    def get_community_score(self, text_content):
         """_summary_
 
         Args:
@@ -116,13 +121,10 @@ class Helper:
 
         Returns:
             int: Community score of the hash
-        """
-        community_score = driver.execute_script(
-                """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report").shadowRoot.querySelector("div > div.row.mb-4.d-none.d-lg-flex > div.col-auto > vt-ioc-score-widget").shadowRoot.querySelector("div > span > span.badge.rounded-pill.fs-6.fw-normal.hstack.align-self-auto.pe-2.bg-body-tertiary");"""
-            )
+        """ 
         try:
-            soup = BeautifulSoup(community_score, "html.parser")
-            return soup.find("span").text
+            community_score = text_content.strip().split("Community Score")[1].strip()
+            return community_score
         except AttributeError:
             return 0
         

@@ -6,7 +6,7 @@ from datetime import datetime
 
 class DOCXManager:
 
-    def __init__(self):
+    def __init__(self, analysis_mode : str = "file"):
         self.doc = Document()
         self.sections = self.doc.sections
         self.doc_style = self.doc.styles["Normal"]

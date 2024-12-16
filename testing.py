@@ -1,8 +1,7 @@
 # Inbuilt
 import time
-import random
 import argparse
-import sqlite3
+import re
 
 # External
 from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
@@ -27,7 +26,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import selenium.common.exceptions
 
-ANALYSIS_TYPES = ["file(hash)", "url", "ip"]
+ANALYSIS_TYPES = ["file", "url", "ip"]
 OUTPUT_FORMAT = ["csv", "pdf", "db", "docx"]
 
 arg_parser = argparse.ArgumentParser(
@@ -39,7 +38,7 @@ arg_parser.add_argument(
     "--mode",
     "-m",
     help="Select type of analysis. (default: file)",
-    default="file(hash)",
+    default="file",
     choices=ANALYSIS_TYPES,
 )
 arg_parser.add_argument(
@@ -78,6 +77,9 @@ IS_PDF = args.output == "pdf"
 IS_DB = args.output == "db"
 IS_DOCX = args.output == "docx"
 
+IS_FILE_SCAN = args.mode == "file"
+IS_URL_SCAN = args.mode == "url"
+IS_IP_SCAN = args.mode == "ip"
 
 console = Console()
 helper = Helper()
@@ -108,7 +110,7 @@ analysis_progress_bar = Progress(
 )
 
 # Class Instances and helpers
-file_manager = FileManager(logger=logger, file_format=args.output)
+file_manager = FileManager(logger=logger, file_format=args.output, analysis_mode=args.mode)
 file_manager.console = analysis_progress_bar.console
 vpn_manager = VPNManager(logger=logger)
 user_agent = UserAgent()
@@ -199,24 +201,34 @@ def scan_file_hash(input_data):
 
 def scan_domain(input_data):
     target = input_data.strip()
+    target = re.sub(r"^https?://", "", target)
     driver.get(f"https://www.virustotal.com/gui/domain/{target}")
 
     time.sleep(args.delay)
 
     element = WebDriverWait(driver, 100).until(
         EC.visibility_of_element_located(
-            (By.XPATH, '//*[@id="view-container"]/file-view')
+            (By.XPATH, '//*[@id="view-container"]/domain-view')
         )
     )
 
-    community_score = helper.get_community_score()
+    community_score = driver.execute_script(
+        """return document.querySelector("#view-container > domain-view")
+    .shadowRoot.querySelector("#report").shadowRoot
+    .querySelector("div > div.row.mb-4.d-none.d-lg-flex > div.col-auto > vt-ioc-score-widget")
+    .shadowRoot.querySelector("div > span").textContent"""
+    )
+
+    final_score = helper.get_community_score(community_score)
 
     basic_data = helper.get_url_data(driver=driver)
+
     try:
-        basic_data["community_score"] = community_score
+        basic_data["community_score"] = 0 if final_score == "• " else final_score
     except AttributeError:
         basic_data["community_score"] = 0
 
+    print("BASIC DATA", basic_data)
     return basic_data
 
 
@@ -247,19 +259,26 @@ with analysis_progress_bar as progress:
                 continue
 
             else:
+                
+                if IS_FILE_SCAN:
+                    analyzed_data = scan_file_hash(target)
+                elif IS_URL_SCAN:
+                    analyzed_data = scan_domain(target)
+                elif IS_IP_SCAN:
+                    analyzed_data = scan_ip(target)
+
 
                 if IS_CSV:
-                    file_manager.save_csv(data=file_scan_data, file=result_file)
+                    file_manager.save_csv(data=analyzed_data, file=result_file)
 
                 elif IS_PDF:
-                    file_scan_data = scan_file_hash(target)
-                    file_manager.add_pdf_report(data=file_scan_data)
+                    file_manager.add_pdf_report(data=analyzed_data)
 
                 elif IS_DOCX:
-                    file_manager.add_docx_report(data=file_scan_data)
+                    file_manager.add_docx_report(data=analyzed_data)
 
                 elif IS_DB:
-                    file_manager.add_db_report(data=file_scan_data)
+                    file_manager.add_db_report(data=analyzed_data)
 
             progress.update(analysis_task, advance=1)
 

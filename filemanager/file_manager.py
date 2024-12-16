@@ -10,11 +10,12 @@ from filemanager.docx_manager import DOCXManager
 from filemanager.db_manager import DBManager
 
 class FileManager:
-    def __init__(self, logger, file_format: str):
+    def __init__(self, logger, file_format: str, analysis_mode = "file"):
         self.logger = logger
         self.file_type = ""
         self.file_name = "report"
         self.file_object = None
+        self.mode = analysis_mode
         self.console = None
 
         self.pdf_path = Path("report.pdf")
@@ -28,20 +29,20 @@ class FileManager:
 
         if file_format == "pdf":
             if not (self.handle_existing_file(self.pdf_path, "PDF")):
-                self.pdf_manager = PDFManager()
+                self.pdf_manager = PDFManager(analysis_mode=self.mode)
                 self.pdf_manager.add_page()
                 self.logger.info("PDF Manager initialized.")
 
         # Handle DOCX file
         if file_format == "docx":
             if not (self.handle_existing_file(self.docx_path, "DOCX")):
-                self.docx_manager = DOCXManager()
+                self.docx_manager = DOCXManager(analysis_mode=self.mode)
                 self.logger.info("DOCX Manager initialized.")
 
         # Handle DB file
         if file_format == "db":
             if not (self.handle_existing_file(self.db_path, "DB")):
-                self.db_manager =  DBManager()
+                self.db_manager =  DBManager(analysis_mode=self.mode)
                 self.logger.info("DB Manager initialized.")
             else:
                 self.db_manager =  DBManager()
@@ -103,7 +104,7 @@ class FileManager:
                 self.logger.error(f"\nError closing file\n")
 
     def save_csv(self, data, file):
-        data_format = f"{data['file_hash']},{data['analysis']}, {data['community_score']},{data['file_type']},{data['file_size']},{data['file_name']},{data['file_last_analysis']}\n"
+        data_format = f"{data['file_hash']},{data['analysis']}, {data['community_score']},{data['file_type']},{data['file_size']},{data['file_name']},{data['last_analysis']}\n"
         file.write(data_format)
 
     def add_db_report(self, data):
