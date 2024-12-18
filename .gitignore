@@ -1,2 +1,5 @@
 virustotal-env/
-report.*
+report.db
+report.csv
+report.docx
+report.pdf
