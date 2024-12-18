@@ -3,11 +3,14 @@ from docx.shared import Pt, Cm
 from docx.oxml.shared import OxmlElement
 from docx.oxml.ns import qn
 from datetime import datetime
+from helper import Helper
 
 class DOCXManager:
 
     def __init__(self, analysis_mode : str = "file"):
         self.doc = Document()
+        self.helper = Helper()
+        self.mode = analysis_mode
         self.sections = self.doc.sections
         self.doc_style = self.doc.styles["Normal"]
         font = self.doc_style.font
@@ -25,15 +28,7 @@ class DOCXManager:
     def add_report(self, data):
 
         # Add fields
-        fields = [
-            ("SHA256 Hash", data.get("file_hash", "N/A")),
-            ("Analysis", data.get("analysis", "N/A")),
-            ("Reputation", str(data.get("community_score", "N/A"))),
-            ("File Type", str(data.get("file_type", "N/A"))),
-            ("File Size", str(data.get("file_size", "N/A"))),
-            ("File Name", data.get("file_name", "N/A")),
-            ("Last Analysis Date", data.get("file_last_analysis", "N/A")),
-        ]
+        fields = self.helper.get_data_fields(data=data, mode=self.mode)
 
         for label, value in fields:
                 paragraph = self.doc.add_paragraph()

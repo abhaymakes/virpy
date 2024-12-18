@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from dateutil import parser, tz
 import logging
 from colorlog import ColoredFormatter
+import re
 
 class Helper:
     def __init__(self):
@@ -62,7 +63,8 @@ class Helper:
 
         soup = BeautifulSoup(html_content, "html.parser")
 
-        positives = soup.find("div", {"class": "hstack gap-2 fw-bold text-danger"}).text
+        positive_pattern = re.compile(r'\bhstack\b.*\bgap-2\b.*\bfw-bold\b')
+        positives = " ".join(soup.find(class_=positive_pattern).text.replace("\n", "").strip().split())
 
         url = soup.find("div", {"class": "vstack gap-2 align-self-center text-truncate me-auto"}).find("div", {"class": "text-truncate"}).text
 
@@ -190,3 +192,51 @@ class Helper:
 
     def is_ip(input_value):
         return all(part.isdigit() and 0 <= int(part) <= 255 for part in input_value.split("."))
+    
+    def extract_domain(self, url):
+        pattern = r"(https?://)?([^/]+)"
+        match = re.match(pattern, url)
+        if match:
+            return match.group(2)
+        return None
+    
+    def get_data_fields(self, data, mode):
+
+        if mode == "url":
+            fields = [
+                ("URL", data.get("url", "N/A")),
+                ("Analysis", data.get("analysis", "N/A")),
+                ("Community Score", str(data.get("community_score", "N/A"))),
+                ("Creation Date", str(data.get("creation_date", "N/A"))),
+                ("Registrar", str(data.get("registrar", "N/A"))),
+                ("Last Analysis", data.get("last_analysis", "N/A"))
+            ]
+            
+            return fields
+
+        elif mode == "file":
+            fields = [
+                ("SHA256 Hash", data.get("file_hash", "N/A")),
+                ("Analysis", data.get("analysis", "N/A")),
+                ("Reputation", str(data.get("community_score", "N/A"))),
+                ("File Type", str(data.get("file_type", "N/A"))),
+                ("File Size", str(data.get("file_size", "N/A"))),
+                ("File Name", data.get("file_name", "N/A")),
+                ("Last Analysis Date", data.get("last_analysis", "N/A")),
+            ]
+            
+            return fields
+
+        elif mode == "ip":
+            fields = [
+                data.get("file_hash", "N/A"),
+                data.get("analysis", "N/A"),
+                str(data.get("community_score", "N/A")),
+                str(data.get("file_type", "N/A")),
+                str(data.get("file_size", "N/A")),
+                data.get("file_name", "N/A"),
+                data.get("last_analysis", "N/A")
+            ]
+            
+            return fields
+        

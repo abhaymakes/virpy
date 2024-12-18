@@ -201,7 +201,7 @@ def scan_file_hash(input_data):
 
 def scan_domain(input_data):
     target = input_data.strip()
-    target = re.sub(r"^https?://", "", target)
+    target = helper.extract_domain(input_data)
     driver.get(f"https://www.virustotal.com/gui/domain/{target}")
 
     time.sleep(args.delay)

@@ -1,10 +1,14 @@
 from fpdf import FPDF
 from datetime import datetime
+from helper import Helper
 
 class PDFManager(FPDF):
     
-    def __init__(self, analysis_mode : str = "file", orientation = "portrait", unit = "mm", format = "A4", font_cache_dir = "DEPRECATED"):
+    def __init__(self, analysis_mode = "file", orientation = "portrait", unit = "mm", format = "A4", font_cache_dir = "DEPRECATED"):
         super().__init__(orientation, unit, format, font_cache_dir)
+
+        self.mode = analysis_mode
+        self.helper =Helper()
 
     is_first_page = True
     when = datetime.now()
@@ -19,15 +23,7 @@ class PDFManager(FPDF):
     def add_report(self, data):
 
         # Add fields
-        fields = [
-            ("SHA256 Hash", data.get("file_hash", "N/A")),
-            ("Analysis", data.get("analysis", "N/A")),
-            ("Reputation", str(data.get("community_score", "N/A"))),
-            ("File Type", str(data.get("file_type", "N/A"))),
-            ("File Size", str(data.get("file_size", "N/A"))),
-            ("File Name", data.get("file_name", "N/A")),
-            ("Last Analysis Date", data.get("file_last_analysis", "N/A")),
-        ]
+        fields = self.helper.get_data_fields(data=data, mode=self.mode)
 
         for field, value in fields:
             self.set_font("Arial", "B", 10)

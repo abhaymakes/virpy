@@ -1,5 +1,5 @@
 import sqlite3
-
+from helper import Helper
 
 class DBManager:
 
@@ -7,6 +7,7 @@ class DBManager:
         self.connection = sqlite3.connect("report.db")
         self.cursor = self.connection.cursor()
         self.mode = analysis_mode
+        self.helper = Helper()
         self.add_table()
 
     def add_table(self):
@@ -41,28 +42,15 @@ class DBManager:
     def add_report(self, data: dict):
         
         if self.mode == "url":
-            fields = [
-                data.get("url", "N/A"),
-                data.get("analysis", "N/A"),
-                str(data.get("community_score", "N/A")),
-                str(data.get("creation_date", "N/A")),
-                str(data.get("registrar", "N/A")),
-                data.get("last_analysis", "N/A")
-            ]
+            fields = self.helper.get_data_fields(data=data, mode=self.mode)
+            only_values = [fields[1] for i in fields]
 
             query = "INSERT INTO records (url, positives, community_score, creation_date, registrar, last_analysis) VALUES (?, ?, ?, ?, ?, ?)"
             self.cursor.execute(query, fields)
 
         elif self.mode == "file":
-            fields = [
-                data.get("file_hash", "N/A"),
-                data.get("analysis", "N/A"),
-                str(data.get("community_score", "N/A")),
-                str(data.get("file_type", "N/A")),
-                str(data.get("file_size", "N/A")),
-                data.get("file_name", "N/A"),
-                data.get("file_last_analysis", "N/A")
-            ]
+            
+            fields = self.helper.get_data_fields(data=data, mode=self.mode)
                 
             query = "INSERT INTO records (hash, positives, community_score, file_type, file_size, file_name, last_analysis) VALUES (?, ?, ?, ?, ?, ?, ?)"
             self.cursor.execute(query, fields)
