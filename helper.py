@@ -68,6 +68,9 @@ class Helper:
 
         url = soup.find("div", {"class": "vstack gap-2 align-self-center text-truncate me-auto"}).find("div", {"class": "text-truncate"}).text
 
+        self.url_data['url'] = self.format_text(url)
+        self.url_data['analysis'] = self.format_text(positives)
+
         details_div = soup.find("div", {"class": "hstack gap-4"}).find_all("div", recursive=False)
 
         registrar_exists = details_div[2].find("div", {"class": "text-body-tertiary"}).text
@@ -85,9 +88,6 @@ class Helper:
         else:
             self.url_data['registrar'] = "Unknown"
 
-
-        self.url_data['url'] = self.format_text(url)
-        self.url_data['analysis'] = self.format_text(positives)
         self.url_data['creation_date'] = self.format_text(creation_date)
         self.url_data['last_analysis'] = self.convert_utc_to_local(last_analysis.strip())
 

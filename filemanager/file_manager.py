@@ -10,6 +10,7 @@ from filemanager.docx_manager import DOCXManager
 from filemanager.db_manager import DBManager
 
 class FileManager:
+
     def __init__(self, logger, file_format: str, analysis_mode = "file"):
         self.logger = logger
         self.file_type = ""
@@ -17,6 +18,10 @@ class FileManager:
         self.file_object = None
         self.mode = analysis_mode
         self.console = None
+
+        self.IS_FILE = self.mode == "file"
+        self.IS_URL = self.mode == "url"
+        self.IS_IP = self.mode == "ip"
 
         self.pdf_path = Path("report.pdf")
         self.docx_path = Path("report.docx")
@@ -78,7 +83,12 @@ class FileManager:
             try:
 
                 with open(self.file_name, "w") as f:
-                    f.write("Hash,Positives,Community Score,File Type,File Size,File Name,Last Analysis\n")
+
+                    if self.IS_FILE:
+                        f.write("Hash,Positives,Community Score,File Type,File Size,File Name,Last Analysis\n")
+                    elif self.IS_URL:
+                        f.write("URL,Positives,Registrar,Creation Date,Last Analysis,Community Score\n")
+
 
                 self.file_object = open(self.file_name, "a+")
                 self.logger.info(
@@ -104,7 +114,10 @@ class FileManager:
                 self.logger.error(f"\nError closing file\n")
 
     def save_csv(self, data, file):
-        data_format = f"{data['file_hash']},{data['analysis']}, {data['community_score']},{data['file_type']},{data['file_size']},{data['file_name']},{data['last_analysis']}\n"
+        if self.IS_FILE:
+            data_format = f"{data['file_hash']},{data['analysis']}, {data['community_score']},{data['file_type']},{data['file_size']},{data['file_name']},{data['last_analysis']}\n"
+        elif self.IS_URL:
+            data_format = ",".join([value for key, value in data.items()]) + "\n"
         file.write(data_format)
 
     def add_db_report(self, data):

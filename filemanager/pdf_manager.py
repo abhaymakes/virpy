@@ -5,7 +5,7 @@ from helper import Helper
 class PDFManager(FPDF):
     
     def __init__(self, analysis_mode = "file", orientation = "portrait", unit = "mm", format = "A4", font_cache_dir = "DEPRECATED"):
-        super().__init__(orientation, unit, format, font_cache_dir)
+        super().__init__(orientation, unit, format)
 
         self.mode = analysis_mode
         self.helper =Helper()

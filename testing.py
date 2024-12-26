@@ -224,7 +224,7 @@ def scan_domain(input_data):
     basic_data = helper.get_url_data(driver=driver)
 
     try:
-        basic_data["community_score"] = 0 if final_score == "• " else final_score
+        basic_data["community_score"] = 0 if final_score == "•" else final_score
     except AttributeError:
         basic_data["community_score"] = 0
 
