@@ -27,7 +27,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import selenium.common.exceptions
 
-ANALYSIS_TYPES = ["file(hash)", "url", "ip"]
+ANALYSIS_TYPES = ["file", "url", "ip"]
 OUTPUT_FORMAT = ["csv", "pdf", "db", "docx"]
 
 arg_parser = argparse.ArgumentParser(
@@ -39,7 +39,7 @@ arg_parser.add_argument(
     "--mode",
     "-m",
     help="Select type of analysis. (default: file)",
-    default="file(hash)",
+    default="file",
     choices=ANALYSIS_TYPES,
 )
 arg_parser.add_argument(

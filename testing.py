@@ -196,6 +196,7 @@ def scan_file_hash(input_data):
     except AttributeError:
         basic_data["community_score"] = 0
 
+    print(basic_data)
     return basic_data
 
 
@@ -213,28 +214,45 @@ def scan_domain(input_data):
     )
 
     community_score = driver.execute_script(
-        """return document.querySelector("#view-container > domain-view")
-    .shadowRoot.querySelector("#report").shadowRoot
-    .querySelector("div > div.row.mb-4.d-none.d-lg-flex > div.col-auto > vt-ioc-score-widget")
-    .shadowRoot.querySelector("div > span").textContent"""
+        """document.querySelector("#view-container > domain-view").shadowRoot.querySelector("div > div > div.col-auto.d-none.d-md-block > vt-ioc-score-widget").shadowRoot.querySelector("div > span").textContent"""
     )
 
+    print(community_score)
     final_score = helper.get_community_score(community_score)
 
     basic_data = helper.get_url_data(driver=driver)
 
     try:
-        basic_data["community_score"] = 0 if final_score == "•" else final_score
+        basic_data["community_score"] = "0" if final_score == "•" else str(final_score)
     except AttributeError:
-        basic_data["community_score"] = 0
+        basic_data["community_score"] = "0"
 
-    print("BASIC DATA", basic_data)
+    # print("BASIC DATA", basic_data)
     return basic_data
 
 
-def scan_ip(target):
-    pass
+def scan_ip(input_data):
+    target = input_data.strip()
+    driver.get(f"https://www.virustotal.com/gui/ip-address/{target}")
 
+    time.sleep(args.delay)
+
+    community_score = driver.execute_script(
+        """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col-auto.d-none.d-md-block > vt-ioc-score-widget").shadowRoot.querySelector("div > span").textContent"""
+    )
+
+    final_score = helper.get_community_score(community_score)
+
+    basic_data = helper.get_ip_data(driver=driver)
+
+    try:
+        basic_data["community_score"] = "0" if final_score == "•" else str(final_score)
+    except AttributeError:
+        basic_data["community_score"] = "0"
+    
+    print(basic_data)
+
+    return basic_data
 
 with analysis_progress_bar as progress:
     """Main loop to perform the analysis"""

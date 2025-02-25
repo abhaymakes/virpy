@@ -88,6 +88,8 @@ class FileManager:
                         f.write("Hash,Positives,Community Score,File Type,File Size,File Name,Last Analysis\n")
                     elif self.IS_URL:
                         f.write("URL,Positives,Registrar,Creation Date,Last Analysis,Community Score\n")
+                    elif self.IS_IP:
+                        f.write("IP,Positives,Country,Last Analysis,Community Score\n")
 
 
                 self.file_object = open(self.file_name, "a+")
@@ -117,7 +119,10 @@ class FileManager:
         if self.IS_FILE:
             data_format = f"{data['file_hash']},{data['analysis']}, {data['community_score']},{data['file_type']},{data['file_size']},{data['file_name']},{data['last_analysis']}\n"
         elif self.IS_URL:
+            data_format = ",".join([value for key, value in data.items()]) + "\n"        
+        elif self.IS_IP:
             data_format = ",".join([value for key, value in data.items()]) + "\n"
+
         file.write(data_format)
 
     def add_db_report(self, data):

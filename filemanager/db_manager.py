@@ -39,6 +39,18 @@ class DBManager:
                 """
             )
 
+        elif self.mode == "ip":
+            self.cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS records (
+                    ip TEXT PRIMARY KEY NOT NULL,
+                    analysis TEXT NOT NULL,
+                    country INTEGER NOT NULL,
+                    last_analysis TEXT NOT NULL,
+                    community_score TEXT NOT NULL)
+                """
+            )
+
     def add_report(self, data: dict):
         
         if self.mode == "url":
@@ -51,9 +63,22 @@ class DBManager:
         elif self.mode == "file":
             
             fields = self.helper.get_data_fields(data=data, mode=self.mode)
+            only_values = [i[1] for i in fields]
+            print(only_values)
+
                 
             query = "INSERT INTO records (hash, positives, community_score, file_type, file_size, file_name, last_analysis) VALUES (?, ?, ?, ?, ?, ?, ?)"
-            self.cursor.execute(query, fields)
+            self.cursor.execute(query, only_values)
+
+        elif self.mode == "ip":
+
+            fields = self.helper.get_data_fields(data=data, mode=self.mode)
+            only_values = [i[1] for i in fields]
+            print(only_values)
+
+                
+            query = "INSERT INTO records (ip, analysis, country, last_analysis, community_score) VALUES (?, ?, ?, ?, ?)"
+            self.cursor.execute(query, only_values) 
 
     def commit_db(self):
         self.connection.commit()

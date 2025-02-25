@@ -4,6 +4,7 @@ from dateutil import parser, tz
 import logging
 from colorlog import ColoredFormatter
 import re
+import pycountry
 
 class Helper:
     def __init__(self):
@@ -91,11 +92,42 @@ class Helper:
         self.url_data['creation_date'] = self.format_text(creation_date)
         self.url_data['last_analysis'] = self.convert_utc_to_local(last_analysis.strip())
 
-        print(self.url_data)
+        # print(self.url_data)
 
         return self.url_data
 
-    
+    def parse_ip_data(self, html_content):
+        """_summary_
+
+        Args:
+            html_content (_type_): HTML document string
+
+        Returns:
+            Dict: Returns a dictionary with all the basic data for the IP address.
+        """
+
+        self.ip_data = {}
+
+        soup = BeautifulSoup(html_content, "html.parser")
+
+        positive_pattern = re.compile(r'\bhstack\b.*\bgap-2\b.*\bfw-bold\b')
+        positives = " ".join(soup.find(class_=positive_pattern).text.replace("\n", "").strip().split())
+
+        ip = soup.find("div", {"class": "vstack gap-2 align-self-center text-truncate me-auto"}).find("div", {"class": "hstack gap-2"}).text
+
+        country = soup.find("div", {"id": "country"}).text
+
+        last_analysis = soup.find("div", {"class": "hstack gap-4"}).find_all("vt-ui-time-ago")[-1].get("data-tooltip-text")
+        
+        self.ip_data['ip'] = ip.strip()
+        self.ip_data['analysis'] = positives.strip()
+        self.ip_data['country'] = self.alpha2_to_country(country.strip()).replace(",","")
+        self.ip_data['last_analysis'] = str(last_analysis).strip()
+
+        return self.ip_data
+
+
+
     def convert_utc_to_local(self, date_string):
         """_summary_
 
@@ -114,6 +146,14 @@ class Helper:
 
     def format_text(self, text: str):
         return text.replace("\n", "").strip()
+    
+    def alpha2_to_country(self, alpha2_code):
+        try:
+            country = pycountry.countries.get(alpha_2=alpha2_code)
+            return country.name
+        except AttributeError:
+            return "Invalid Alpha-2 code"
+
     
     def get_community_score(self, text_content):
         """_summary_
@@ -160,6 +200,14 @@ class Helper:
             """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report > vt-ui-domain-card").shadowRoot.innerHTML""")
 
         return self.parse_url_data(content)
+
+
+    def get_ip_data(self, driver):
+        content = driver.execute_script(
+            """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col > vt-ui-ip-card").shadowRoot.querySelector("div").innerHTML"""
+        )
+
+        return self.parse_ip_data(content)
 
     def get_logger(self): 
         """
@@ -229,13 +277,11 @@ class Helper:
 
         elif mode == "ip":
             fields = [
-                data.get("file_hash", "N/A"),
-                data.get("analysis", "N/A"),
-                str(data.get("community_score", "N/A")),
-                str(data.get("file_type", "N/A")),
-                str(data.get("file_size", "N/A")),
-                data.get("file_name", "N/A"),
-                data.get("last_analysis", "N/A")
+                ("IP", str(data.get("ip", "N/A"))),
+                ("Analysis", str(data.get("analysis", "N/A"))),
+                ("Country", str(data.get("country", "N/A"))),
+                ("Last Analysis", str(data.get("lasy_analysis", "N/A"))),
+                ("Community Score", str(data.get("community_score", "N/A")))
             ]
             
             return fields
