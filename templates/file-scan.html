@@ -1,0 +1,145 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-[Inter]">
+    <div class="flex h-screen">
+        <sidebar-component></sidebar-component>
+
+        <!-- Main Content -->
+        <main class="flex-1 bg-gray-50 p-4 flex flex-col">
+            <h2 class="text-2xl font-semibold mb-4">File Scan</h2>
+
+            <!-- Drag and Drop File Upload (Full Width) -->
+            <div id="drop-area" class="border-2 border-dashed border-gray-300 p-10 text-center rounded-lg bg-gray-100 flex-1 flex flex-col justify-center items-center cursor-pointer">
+                <input type="file" id="file-input" class="hidden" />
+                <p id="drop-text" class="text-gray-500 text-lg">Drag & Drop a file here or click to select</p>
+            </div>
+
+            <!-- File Information -->
+            <div id="file-info" class="hidden mt-4 p-4 bg-white rounded-lg shadow-md">
+                <p class="text-lg font-medium">Selected File:</p>
+                <p id="file-name" class="text-gray-700"></p>
+                <p id="file-size" class="text-gray-500"></p>
+                <p id="file-type" class="text-gray-500"></p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progress-container" class="hidden mt-4">
+                <p class="text-gray-600">Scanning Progress:</p>
+                <div class="w-full bg-gray-200 rounded-full h-4 mt-2">
+                    <div id="progress-bar" class="bg-blue-500 h-4 rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Start Scan Button -->
+            <button id="start-scan" class="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Start Scan</button>
+
+            <!-- Scanned Files List -->
+            <div id="scanned-files" class="mt-6">
+                <h3 class="text-xl font-semibold mb-2">Previous Scans</h3>
+                <ul id="file-list" class="bg-white p-4 rounded-lg shadow-md text-gray-700">
+                    <li class="text-gray-500">No files scanned yet.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+</body>
+
+<script src="/static/sidebar.js" defer></script>
+<script>
+    feather.replace();
+
+    // File handling elements
+    const dropArea = document.getElementById("drop-area");
+    const fileInput = document.getElementById("file-input");
+    const fileNameDisplay = document.getElementById("file-name");
+    const fileSizeDisplay = document.getElementById("file-size");
+    const fileTypeDisplay = document.getElementById("file-type");
+    const fileInfoBox = document.getElementById("file-info");
+    const startScanButton = document.getElementById("start-scan");
+    const progressContainer = document.getElementById("progress-container");
+    const progressBar = document.getElementById("progress-bar");
+    const fileList = document.getElementById("file-list");
+
+    dropArea.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            fileNameDisplay.textContent = `Name: ${file.name}`;
+            fileSizeDisplay.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+            fileTypeDisplay.textContent = `Type: ${file.type || "Unknown"}`;
+            fileInfoBox.classList.remove("hidden");
+            startScanButton.disabled = false;
+        }
+    });
+
+    dropArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropArea.classList.add("border-blue-500");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("border-blue-500");
+    });
+
+    dropArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dropArea.classList.remove("border-blue-500");
+
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            fileInput.files = event.dataTransfer.files;
+            fileNameDisplay.textContent = `Name: ${file.name}`;
+            fileSizeDisplay.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+            fileTypeDisplay.textContent = `Type: ${file.type || "Unknown"}`;
+            fileInfoBox.classList.remove("hidden");
+            startScanButton.disabled = false;
+        }
+    });
+
+    // Simulated scan logic
+    startScanButton.addEventListener("click", () => {
+        startScanButton.disabled = true;
+        progressContainer.classList.remove("hidden");
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10;
+            progressBar.style.width = progress + "%";
+            if (progress >= 100) {
+                clearInterval(interval);
+                progressContainer.classList.add("hidden");
+                startScanButton.disabled = false;
+                addToFileList(fileInput.files[0].name);
+            }
+        }, 500);
+    });
+
+    function addToFileList(fileName) {
+        const listItem = document.createElement("li");
+        listItem.textContent = fileName;
+        fileList.appendChild(listItem);
+
+        if (fileList.children[0].textContent === "No files scanned yet.") {
+            fileList.removeChild(fileList.children[0]);
+        }
+    }
+</script>
+
+</html>
