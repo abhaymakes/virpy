@@ -196,7 +196,6 @@ def scan_file_hash(input_data):
     except AttributeError:
         basic_data["community_score"] = 0
 
-    print(basic_data)
     return basic_data
 
 
@@ -237,18 +236,18 @@ def scan_ip(input_data):
 
     time.sleep(args.delay)
 
-    community_score = driver.execute_script(
-        """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col-auto.d-none.d-md-block > vt-ioc-score-widget").shadowRoot.querySelector("div > span").textContent"""
-    )
+    # community_score = driver.execute_script(
+    #     """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col-auto.d-none.d-md-block > vt-ioc-score-widget").shadowRoot.querySelector("div > span").textContent"""
+    # )
 
-    final_score = helper.get_community_score(community_score)
+    # final_score = helper.get_community_score(community_score)
 
     basic_data = helper.get_ip_data(driver=driver)
 
-    try:
-        basic_data["community_score"] = "0" if final_score == "•" else str(final_score)
-    except AttributeError:
-        basic_data["community_score"] = "0"
+    # try:
+    #     basic_data["community_score"] = "0" if final_score == "•" else str(final_score)
+    # except AttributeError:
+    #     basic_data["community_score"] = "0"
     
     print(basic_data)
 

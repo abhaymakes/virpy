@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from datetime import datetime
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 
@@ -18,18 +19,20 @@ class FileManager:
         self.file_object = None
         self.mode = analysis_mode
         self.console = None
+        self.when = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         self.IS_FILE = self.mode == "file"
         self.IS_URL = self.mode == "url"
         self.IS_IP = self.mode == "ip"
 
-        self.pdf_path = Path("report.pdf")
-        self.docx_path = Path("report.docx")
-        self.db_path = Path("report.db")
+        self.pdf_path = Path(f"{self.when}.pdf")
+        self.docx_path = Path(f"{self.when}.docx")
+        self.db_path = Path(f"{self.when}.db")
 
         self.pdf_manager = None
         self.docx_manager = None
         self.db_manager = None
+
 
 
         if file_format == "pdf":
@@ -64,7 +67,7 @@ class FileManager:
         """
         self.file_type = file_type
         if file_type == "csv":
-            self.file_name = f"report.csv"
+            self.file_name = f"{self.when}.csv"
         
         if self.file_exists(self.file_name):
 
@@ -89,7 +92,7 @@ class FileManager:
                     elif self.IS_URL:
                         f.write("URL,Positives,Registrar,Creation Date,Last Analysis,Community Score\n")
                     elif self.IS_IP:
-                        f.write("IP,Positives,Country,Last Analysis,Community Score\n")
+                        f.write("IP,Positives,Country,Last Analysis\n")
 
 
                 self.file_object = open(self.file_name, "a+")

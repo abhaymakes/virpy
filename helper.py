@@ -196,15 +196,22 @@ class Helper:
             dict: Dict with the basic URL analysis data
         """
 
+        # content = driver.execute_script(
+        #     """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report > vt-ui-domain-card").shadowRoot.innerHTML""")
+        
         content = driver.execute_script(
-            """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("#report > vt-ui-domain-card").shadowRoot.innerHTML""")
+            """return document.querySelector("#view-container > domain-view").shadowRoot.querySelector("div > div > div.col > vt-ui-domain-card").shadowRoot.querySelector("div").innerHTML""")
 
         return self.parse_url_data(content)
 
 
     def get_ip_data(self, driver):
+        # content = driver.execute_script(
+        #     """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col > vt-ui-ip-card").shadowRoot.querySelector("div").innerHTML"""
+        # )
+
         content = driver.execute_script(
-            """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col > vt-ui-ip-card").shadowRoot.querySelector("div").innerHTML"""
+            """return document.querySelector("#view-container > ip-address-view").shadowRoot.querySelector("div > div > div.col-12.col-md.overflow-x-auto > vt-ui-ip-card").shadowRoot.querySelector("div").innerHTML"""
         )
 
         return self.parse_ip_data(content)
