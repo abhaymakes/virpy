@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-[Inter]">
+    <div class="flex h-screen">
+        <sidebar-component></sidebar-component>
+        
+        <main class="flex-1 bg-gray-50 p-2">
+            <h2 class="text-2xl font-semibold mb-4">Reports</h2>
+        
+            <div class="bg-white rounded-xl shadow p-4">
+                {% if files %}
+                    <ul class="space-y-2">
+                        {% for file in files %}
+                        <li class="group flex justify-between items-center p-3 border rounded transition bg-white hover:bg-gray-100 min-h-[72px]">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-gray-800">{{ file.name }}</span>
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 uppercase">
+                                        {{ file.type }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-1">
+                                    {{ file.size_kb }} KB • Modified {{ file.modified }}
+                                </div>
+                            </div>
+                        
+                            <a href="{{ file.path }}" download
+                               class="hidden group-hover:flex items-center gap-1 px-3 py-1.5 bg-white text-black rounded-lg shadow-md text-sm hover:bg-gray-200 transition">
+                                <i data-feather="download" class="w-4 h-4"></i>
+                                Download
+                            </a>
+                        </li>
+                        
+                        
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500">No reports found.</p>
+                {% endif %}
+            </div>
+        </main>
+        
+        </main>
+        
+    </div>
+</body>
+<script src="/static/sidebar.js" defer></script>
+<script>
+    feather.replace();
+</script>
+
+</html>

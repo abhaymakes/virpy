@@ -17,13 +17,63 @@
 <body class="bg-gray-100 font-[Inter]">
     <div class="flex h-screen">
         <sidebar-component></sidebar-component>
-        
+
         <!-- Main Content -->
-        <main class="flex-1 bg-gray-50 p-2">
-            <div class="h-full bg-white rounded-lg shadow-md">Help</div>
+        <main class="flex-1 bg-gray-50 p-6">
+            
+            <div class="bg-white rounded-2xl shadow-md p-6 mx-auto space-y-6">
+                <!-- Header -->
+                <div class="flex items-center gap-3">
+                    <i data-feather="help-circle" class="w-6 h-6 text-blue-600"></i>
+                    <h2 class="text-2xl font-semibold text-gray-800">Help & User Guide</h2>
+                </div>
+
+                <!-- User Guide -->
+                <div>
+                    <h3 class="text-xl font-medium mb-2 text-gray-700">Getting Started</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600">
+                        <li>Navigate to the <strong>Scanner</strong> tab to upload and scan files, URLs, or IPs.</li>
+                        <li>Choose the scan mode and output format (CSV, PDF, DOCX, or DB).</li>
+                        <li>Click <strong>Run</strong> to start the scan.</li>
+                        <li>Check the <strong>Reports</strong> section to view and download generated reports.</li>
+                        <li>Use the <strong>Settings</strong> tab to adjust scan parameters like delay, headless mode, etc.</li>
+                    </ul>
+                </div>
+
+                <!-- Server Status -->
+                <div class="border-t pt-4">
+                    <h3 class="text-xl font-medium mb-2 text-gray-700">Server Status</h3>
+                    <div class="flex items-center gap-3 text-green-600">
+                        <i data-feather="server" class="w-5 h-5"></i>
+                        <span>Flask server is running on <strong>http://127.0.0.1:5000</strong></span>
+                    </div>
+                    <a href="http://127.0.0.1:5000" target="_blank"
+                        class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+                        <i data-feather="external-link" class="w-4 h-4"></i>
+                        Open Web Interface
+                    </a>
+                </div>
+
+                <!-- Troubleshooting -->
+                <div class="border-t pt-4">
+                    <h3 class="text-xl font-medium mb-2 text-gray-700">Troubleshooting Tips</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600">
+                        <li>If scans aren't working, make sure you're connected to the internet and VPN (if required).</li>
+                        <li>Check your VirusTotal API key settings in the config file if using the API version.</li>
+                        <li>Ensure the `input-files` and `generated-reports` folders exist and have proper permissions.</li>
+                        <li>Refer to console logs for detailed error messages.</li>
+                    </ul>
+                </div>
+
+                <!-- About -->
+                <div class="border-t pt-4 text-sm text-gray-500">
+                    Built with ❤️ using Flask, Tailwind CSS, and PyWebView. For feedback or issues, contact the developer.
+                </div>
+            </div>
         </main>
     </div>
 </body>
+
 <script src="/static/sidebar.js" defer></script>
 <script>
     feather.replace();

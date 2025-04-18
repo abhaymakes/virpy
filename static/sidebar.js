@@ -17,6 +17,12 @@ class SideBar extends HTMLElement {
                     <span>Scanning</span>
                 </a>
             </li>
+            <li class="mb-2">
+                <a href="/reports" class="nav-link flex items-center gap-2 px-3 py-2 rounded-md hover:bg-purple-50 hover:text-purple-600 text-gray-500">
+                    <i data-feather="database" class="w-4 h-4"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
         </ul>
         <h2 class="text-gray-400 text-sm uppercase mb-3">General</h2>
         <ul>

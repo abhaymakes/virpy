@@ -249,7 +249,7 @@ def scan_ip(input_data):
     # except AttributeError:
     #     basic_data["community_score"] = "0"
     
-    print(basic_data)
+    # print(basic_data)
 
     return basic_data
 
